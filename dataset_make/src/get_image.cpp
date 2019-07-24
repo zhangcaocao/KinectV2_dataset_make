@@ -14,7 +14,7 @@ using namespace std;
 using namespace cv;
 
 int counters = 0;
-string save_path = "";  //根据自己需要修改
+string save_path = "/home/cl/data/";  //根据自己需要修改
 void ImageSave(const sensor_msgs::ImageConstPtr& msgRGB,const sensor_msgs::ImageConstPtr& msgD)
 {
     string imagergb = "image";
@@ -46,8 +46,9 @@ void ImageSave(const sensor_msgs::ImageConstPtr& msgRGB,const sensor_msgs::Image
     counters++;
  
 
-   ofstream frgb(save_path + "/rgb.txt");
-   ofstream fdepth(save_path + "/depth.txt");
+   ofstream frgb(save_path + "rgb.txt", std::ios_base::app);
+ 
+   ofstream fdepth(save_path + "depth.txt", std::ios_base::app);
 
    //显示图像
     cv::namedWindow(imagergb, cv::WINDOW_AUTOSIZE); 
@@ -55,11 +56,18 @@ void ImageSave(const sensor_msgs::ImageConstPtr& msgRGB,const sensor_msgs::Image
     cv::waitKey(1);
     cv::Mat image_rgb = cv_ptrRGB->image;
     string picname_rgb =to_string( cv_ptrRGB->header.stamp.toSec());
-    picname_rgb =save_path + "/rgb/" + picname_rgb + ".png"; 
-    cout << picname_rgb << endl;
+    picname_rgb =save_path + "rgb/" + picname_rgb + ".png"; 
+    cout << "picname_rgb" << picname_rgb << endl;
+
+    
     imwrite(picname_rgb, image_rgb);//保存rgb图片
     lie = to_string( cv_ptrRGB->header.stamp.toSec()); 
-    frgb << lie << " " << "rgb/" << lie << ".png" << endl;
+    if (frgb.is_open())
+    {
+        frgb << lie << " " << "rgb/" << lie << ".png\n" ;
+    }else {
+        cout << "frgb closed " << endl;
+    }
 
     
     //显示图像
@@ -69,13 +77,14 @@ void ImageSave(const sensor_msgs::ImageConstPtr& msgRGB,const sensor_msgs::Image
     
     cv::Mat image_depth = cv_ptrD->image; 
     string picname_depth =to_string( cv_ptrD->header.stamp.toSec()); 
-    picname_depth =save_path + "/depth/" + picname_depth + ".png";
+    picname_depth =save_path + "depth/" + picname_depth + ".png";
+    
+    std::cout <<"picname_depth" <<picname_depth << std::endl;
+
     imwrite(picname_depth,  image_depth);//保存rgb图片
     lie = to_string( cv_ptrD->header.stamp.toSec()); 
-    fdepth << lie << " " << "depth/" << lie << ".png" << endl; 
+    fdepth << lie << " " << "depth/" << lie << ".png\n"; 
 
-    // string picname = to_string(counters);   
-    // string cutname = picname.substr(picname.length()-4,4); 
     
     std::cout << "输出第  " << counters << "  幅图像" << std::endl;
     if(counters == 500) // 假设只保存500幅图像
