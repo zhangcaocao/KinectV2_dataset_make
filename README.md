@@ -44,6 +44,7 @@ if(counters == 500) // 假设只保存500幅图像
 * 生成可执行文件 get_image_node 
 
 > sudo updatedb
+
 > locate get_image_node 
 
 * 运行
